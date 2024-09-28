@@ -2,78 +2,60 @@
 # Мы будем парсить данные с сайта https://moscow.hh.ru/vacancies/programmist и сохранять их в csv-файл.
 
 # Импортируем модуль со временем
-import time
+# import time
 # Импортируем модуль csv
-import csv
+# import csv
 # Импортируем Selenium
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
 
 from openpyxl import Workbook
 
 
 # Инициализируем браузер
-driver = webdriver.Chrome()
+# driver = webdriver.Chrome()
 # Если мы используем Chrome, пишем
 # driver = webdriver.Chrome()
+import time
+import csv
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
-# В отдельной переменной указываем сайт, который будем просматривать
+
+driver = webdriver.Chrome()
+
 url = "https://tomsk.hh.ru/vacancies/programmist"
 
-# Открываем веб-страницу
 driver.get(url)
 
-# Задаём 3 секунды ожидания, чтобы веб-страница успела прогрузиться
-time.sleep(3)
+time.sleep(5)
 
-# Находим все карточки с вакансиями с помощью названия класса
-# Названия классов берём с кода сайта vacancy-card--hhzAtjuXrYFMBMspDjrF
-vacancies = driver.find_elements(By.CLASS_NAME, 'vacancy-card--hhzAtjuXrYFMBMspDjrF')
+vacancies = driver.find_elements(By.CLASS_NAME, "vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter")
 
-# Выводим вакансии на экран
-print(vacancies)
-# Создаём список, в который потом всё будет сохраняться
 parsed_data = []
 
-# Перебираем коллекцию вакансий
-# Используем конструкцию try-except, чтобы "ловить" ошибки, как только они появляются
 for vacancy in vacancies:
-   try:
-       # # Находим названия вакансии
-       # title = vacancy.find_element(By.CSS_SELECTOR, 'span.vacancy-name--SYbxrgpHgHedVTkgI_cA').text
-       # # Находим названия компаний
-       # company = vacancy.find_element(By.CSS_SELECTOR, 'span.company-info-text--O32pGCRW0YDmp3BHuNOP').text
-       # # Находим зарплаты
-       # salary = vacancy.find_element(By.CSS_SELECTOR, 'span.compensation-text--cCPBXayRjn5GuLFWhGTJ').text
-       # # Находим ссылку с помощью атрибута 'href'
-       # link = vacancy.find_element(By.CSS_SELECTOR, 'a.bloko-link').get_attribute('href')
+    try:
+        title = vacancy.find_element(By.CSS_SELECTOR, "span.magritte-text___pbpft_3-0-13")
+        company = vacancy.find_element(By.CSS_SELECTOR, "span.magritte-text___tkzIl_4-2-6")
+        salary = vacancy.find_element(By.CSS_SELECTOR, "span.magritte-text___pbpft_3-0-13")
+        link = vacancy.find_element(By.CSS_SELECTOR, "a.magritte-link___b4rEM_4-2-6").get_attribute("href")
+    except:
+        print("Parsing error")
+        continue
 
-       title = vacancy.find_element(By.CSS_SELECTOR, 'span.magritte-text___tkzIl_4-3-1').text
-       # company = vacancy.find_element(By.CSS_SELECTOR, 'span.company-info-text--O32pGCRW0YDmp3BHuNOP').text
-       # salary = vacancy.find_element(By.CSS_SELECTOR, 'span.compensation-text--cCPBXayRjn5GuLFWhGTJ').text
-       link = vacancy.find_element(By.CSS_SELECTOR, 'a.magritte-link___b4rEM_4-3-1').get_attribute('href')
-       # Извлечение названия компании
-       company = vacancy.find_element(By.CSS_SELECTOR, 'span.magritte-text___tkzIl_4-3-1').text
+    parsed_data.append([title.text, company.text, salary.text, link])
 
-       # Извлечение информации о заработной плате
-       salary = vacancy.find_element(By.CSS_SELECTOR, 'div.compensation-labels_magritte--Ygc18cwREyuZ91K3GL03').text
+driver.quit()
 
-   # Находим элементы внутри вакансий по значению
-
-       parsed_data.append([title, company, salary, link])
-
-   # Вставляем блок except на случай ошибки - в случае ошибки программа попытается продолжать
-   except Exception as e:(
-       print(f"Произошла ошибка при парсинге: {e}"))
-   # continue
-
-   finally:
-# Закрываем подключение браузер
-       driver.quit()
+# with open("hh.csv", "w", newline="", encoding="utf-8") as file:
+#     writer = csv.writer(file)
+#     writer.writerow(["title", "company", "salary", "link"])
+#     writer.writerows(parsed_data)
 
 # Прописываем открытие нового файла, задаём ему название и форматирование
 # 'w' означает режим доступа, мы разрешаем вносить данные в таблицу
-with open("hh-msk_prog.csv", 'w',newline='', encoding='utf-8') as file:
+with open("hh-tomsk_prog.csv", 'w',newline='', encoding='utf-8') as file:
 
 # Используем модуль csv и настраиваем запись данных в виде таблицы
 # Создаём объект
